@@ -6,16 +6,18 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// routes (we'll add these soon)
+// routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/children', require('./routes/child'));
+app.use('/api/screening', require('./routes/screening'));
+
 app.get('/', (req, res) => {
     res.json({ message: 'Spectra API is running' });
 });
 
-// connect to MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         console.log('MongoDB connected');
