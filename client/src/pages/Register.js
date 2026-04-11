@@ -4,53 +4,87 @@ import { registerUser } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
-    const [form, setForm] = useState({ name: '', email: '', password: '' });
+    const [form, setForm] = useState({ name: '', email: '', password: '', childName: '', childDOB: '' });
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError('');
         try {
-            const { data } = await registerUser(form);
+            const { data } = await registerUser({ name: form.name, email: form.email, password: form.password });
             login(data.user, data.token);
             navigate('/dashboard');
         } catch (err) {
             setError('Registration failed. Email may already exist.');
         }
+        setLoading(false);
     };
 
+    const inputStyle = { width: '100%', padding: '0.75rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none', marginBottom: '1rem' };
+    const labelStyle = { display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' };
+
     return (
-        <div style={{ maxWidth: '400px', margin: '100px auto', padding: '2rem' }}>
-            <h2>Create your Spectra account</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Full name"
-                    value={form.name}
-                    onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    style={{ display: 'block', width: '100%', marginBottom: '1rem', padding: '0.5rem' }}
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    style={{ display: 'block', width: '100%', marginBottom: '1rem', padding: '0.5rem' }}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
-                    style={{ display: 'block', width: '100%', marginBottom: '1rem', padding: '0.5rem' }}
-                />
-                <button type="submit" style={{ width: '100%', padding: '0.75rem' }}>
-                    Register
-                </button>
-            </form>
-            <p>Already have an account? <Link to="/login">Login</Link></p>
+        <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+            <div style={{ background: 'white', borderRadius: '20px', padding: '3rem', width: '100%', maxWidth: '440px', boxShadow: '0 20px 60px rgba(109,40,217,0.15)' }}>
+
+                {/* Logo */}
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <div style={{ width: '64px', height: '64px', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '32px' }}>
+                        🧩
+                    </div>
+                    <h1 style={{ fontSize: '28px', fontWeight: '700', color: '#4c1d95' }}>Spectra</h1>
+                    <p style={{ color: '#7c3aed', fontSize: '14px', marginTop: '4px' }}>Early autism awareness & screening</p>
+                </div>
+
+                <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#1f2937', marginBottom: '1.5rem' }}>Create your account</h2>
+
+                {error && (
+                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', padding: '0.75rem 1rem', borderRadius: '10px', marginBottom: '1rem', fontSize: '14px' }}>
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit}>
+                    <div>
+                        <label style={labelStyle}>Full name</label>
+                        <input type="text" placeholder="Your full name" value={form.name}
+                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                            required style={inputStyle}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'} />
+                    </div>
+                    <div>
+                        <label style={labelStyle}>Email</label>
+                        <input type="email" placeholder="you@example.com" value={form.email}
+                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                            required style={inputStyle}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'} />
+                    </div>
+                    <div>
+                        <label style={labelStyle}>Password</label>
+                        <input type="password" placeholder="Create a password" value={form.password}
+                            onChange={(e) => setForm({ ...form, password: e.target.value })}
+                            required style={inputStyle}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'} />
+                    </div>
+
+                    <button type="submit" disabled={loading}
+                        style={{ width: '100%', padding: '0.875rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '16px', fontWeight: '600', cursor: 'pointer', marginTop: '0.5rem' }}>
+                        {loading ? 'Creating account...' : 'Create Account'}
+                    </button>
+                </form>
+
+                <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#6b7280', fontSize: '14px' }}>
+                    Already have an account?{' '}
+                    <Link to="/login" style={{ color: '#7c3aed', fontWeight: '600', textDecoration: 'none' }}>Login</Link>
+                </p>
+            </div>
         </div>
     );
 };
