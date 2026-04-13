@@ -5,6 +5,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AddChild from './pages/AddChild';
 import Awareness from './pages/Awareness';
+import Screening from './pages/Screening';
+import Result from './pages/Result';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -30,6 +32,16 @@ const App = () => {
                    <Route path="/add-child" element={
                         <ProtectedRoute>
                         <AddChild />
+                        </ProtectedRoute>
+                     }/>
+                   <Route path="/screening" element={
+                        <ProtectedRoute>
+                        <Screening />
+                        </ProtectedRoute>
+                     }/>
+                   <Route path="/result" element={
+                        <ProtectedRoute>
+                        <Result />
                         </ProtectedRoute>
                      }/>
                 </Routes>
