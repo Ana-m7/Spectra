@@ -1,5 +1,6 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+const child = JSON.parse(localStorage.getItem('child'));
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -35,10 +36,9 @@ const Dashboard = () => {
             </nav>
 
             {/* Hero */}
-            <div style={{ background: 'linear-gradient(135deg, #7c3aed, #a855f7)', padding: '3rem 2rem', textAlign: 'center', color: 'white' }}>
-                <h2 style={{ fontSize: '28px', fontWeight: '700', marginBottom: '0.5rem' }}>Hello, {user?.name} 👋</h2>
-                <p style={{ fontSize: '16px', opacity: '0.9' }}>What would you like to explore today?</p>
-            </div>
+            <p style={{ fontSize: '16px', opacity: '0.9' }}>
+               {child ? `Viewing for ${child.name} · Age band: ${child.ageBand}` : 'Add your child to get started'}
+           </p>
 
             {/* Cards */}
             <div style={{ maxWidth: '900px', margin: '2rem auto', padding: '0 1.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
@@ -53,6 +53,14 @@ const Dashboard = () => {
                     </div>
                 ))}
             </div>
+            {!child && (
+             <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+             <button onClick={() => navigate('/add-child')}
+            style={{ padding: '0.75rem 2rem', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', color: 'white', border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '600', cursor: 'pointer' }}>
+            + Add your child
+        </button>
+    </div>
+)}
         </div>
     );
 };
