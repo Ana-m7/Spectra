@@ -18,3 +18,4 @@ export const addChild = (data) => API.post('/children', data);
 export const getChildren = () => API.get('/children');
 export const submitScreening = (data) => API.post('/screening/submit', data);
 export const getScreeningHistory = (childId) => API.get(`/screening/history/${childId}`);
+export const getBehaviors = (params) => API.get('/behaviors', { params });

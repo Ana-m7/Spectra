@@ -7,6 +7,8 @@ import AddChild from './pages/AddChild';
 import Awareness from './pages/Awareness';
 import Screening from './pages/Screening';
 import Result from './pages/Result';
+import BehaviorLibrary from './pages/BehaviorLibrary';
+import Roadmap from './pages/Roadmap';
 
 const ProtectedRoute = ({ children }) => {
     const { user, loading } = useAuth();
@@ -42,6 +44,16 @@ const App = () => {
                    <Route path="/result" element={
                         <ProtectedRoute>
                         <Result />
+                        </ProtectedRoute>
+                     }/>
+                     <Route path="/behaviors" element={
+                        <ProtectedRoute>
+                        <BehaviorLibrary />
+                        </ProtectedRoute>
+                     }/>
+                     <Route path="/roadmap" element={
+                        <ProtectedRoute>
+                        <Roadmap />
                         </ProtectedRoute>
                      }/>
                 </Routes>

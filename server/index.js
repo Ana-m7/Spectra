@@ -13,6 +13,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/children', require('./routes/child'));
 app.use('/api/screening', require('./routes/screening'));
+app.use('/api/behaviors', require('./routes/behaviors'));
 
 app.get('/', (req, res) => {
     res.json({ message: 'Spectra API is running' });
