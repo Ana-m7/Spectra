@@ -1,4 +1,4 @@
-# Spectra — Early Autism Awareness & Screening Platform
+# Spectra : Early Autism Awareness & Screening Platform
 
 > "The first step to helping your child isn't a diagnosis. It's knowing what you're looking at."
 
