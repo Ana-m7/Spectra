@@ -128,20 +128,34 @@ const Result = () => {
                             </div>
                         </div>
 
-                        {/* Key factors */}
-                        <div style={{ marginBottom: '2rem' }}>
-                            <p style={{ fontSize: '13px', fontWeight: '600', color: '#374151', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '1rem' }}>
-                                Key Factors in This Result
-                            </p>
-                            {result.explanations.map((exp, i) => (
-                                <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '0.875rem', padding: '1rem', background: '#f9fafb', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
-                                    <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: config.bg, border: `1.5px solid ${config.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '12px', fontWeight: '700', color: config.color }}>
-                                        {i + 1}
-                                    </div>
-                                    <p style={{ fontSize: '14px', color: '#374151', lineHeight: '1.65', paddingTop: '2px' }}>{exp.explanation}</p>
-                                </div>
-                            ))}
-                        </div>
+                        {/* Key factors — only show if confidence is meaningful */}
+{result.confidence > 0.3 && result.explanations && result.explanations.length > 0 && (
+    <div style={{ marginBottom: '2rem' }}>
+        <p style={{ fontSize: '13px', fontWeight: '600', color: '#374151', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '1rem' }}>
+            Key Factors in This Result
+        </p>
+        {result.explanations.map((exp, i) => (
+            <div key={i} style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', marginBottom: '0.875rem', padding: '1rem', background: '#f9fafb', borderRadius: '12px', border: '1px solid #f3f4f6' }}>
+                <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: config.bg, border: `1.5px solid ${config.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '12px', fontWeight: '700', color: config.color }}>
+                    {i + 1}
+                </div>
+                <p style={{ fontSize: '14px', color: '#374151', lineHeight: '1.65', paddingTop: '2px' }}>{exp.explanation}</p>
+            </div>
+        ))}
+    </div>
+)}
+
+{/* If low confidence, show reassurance instead */}
+{result.confidence <= 0.3 && (
+    <div style={{ marginBottom: '2rem', padding: '1.25rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px' }}>
+        <p style={{ fontSize: '13px', fontWeight: '700', color: '#16a34a', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            No Significant Indicators
+        </p>
+        <p style={{ fontSize: '14px', color: '#374151', lineHeight: '1.7' }}>
+            Your child's responses did not show significant behavioral indicators at this time. Continue monitoring their development and feel free to screen again in a few months.
+        </p>
+    </div>
+)}
 
                         {/* Disclaimer */}
                         <div style={{ background: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '12px', padding: '1.25rem' }}>
