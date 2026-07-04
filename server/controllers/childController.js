@@ -11,17 +11,28 @@ const getAgeBand = (dob) => {
 
 exports.addChild = async (req, res) => {
     try {
-        const { name, dateOfBirth } = req.body;
+        const { name, dateOfBirth, sex, jaundice, familyMemberWithASD } = req.body;
+
+        if (!name || !dateOfBirth || !sex) {
+            return res.status(400).json({ message: 'name, dateOfBirth, and sex are required' });
+        }
+        if (!['male', 'female'].includes(sex)) {
+            return res.status(400).json({ message: 'sex must be either "male" or "female"' });
+        }
+
         const ageBand = getAgeBand(dateOfBirth);
         const child = await Child.create({
             userId: req.user.userId,
             name,
             dateOfBirth,
-            ageBand
+            ageBand,
+            sex,
+            jaundice: Boolean(jaundice),
+            familyMemberWithASD: Boolean(familyMemberWithASD)
         });
         res.status(201).json(child);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -30,6 +41,6 @@ exports.getChildren = async (req, res) => {
         const children = await Child.find({ userId: req.user.userId });
         res.json(children);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };

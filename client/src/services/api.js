@@ -19,3 +19,5 @@ export const getChildren = () => API.get('/children');
 export const submitScreening = (data) => API.post('/screening/submit', data);
 export const getScreeningHistory = (childId) => API.get(`/screening/history/${childId}`);
 export const getBehaviors = (params) => API.get('/behaviors', { params });
+export const addJournalEntry = (data) => API.post('/journal', data);
+export const getJournalHistory = (childId) => API.get(`/journal/history/${childId}`);

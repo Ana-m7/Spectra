@@ -37,7 +37,7 @@ Spectra addresses this gap by combining psychoeducational content, ML-based beha
 - **Behavioral Screening** : Age-gated 10-question form based on M-CHAT-R criteria  
 - **ML Risk Assessment** : XGBoost model returns Low / Medium / High risk band with confidence score  
 - **SHAP Explainability** : Top 3 plain-language reasons for each result  
-- **Behavior Library** : Searchable database of autism-related behaviors with age filters and concern levels  
+- **Behavior Library** : Searchable database of 28 autism-related behaviors across social, communication, sensory, motor, and play domains, with age-band and concern-level filters  
 - **Action Roadmap** : Personalized 3-tier next steps: Observe → Consult → Seek specialist  
 - **Doctor Script** : Exact phrases to use with pediatricians, including what to say if dismissed  
 - **Progress Journal** : Weekly behavioral logs with Recharts trend visualization  
@@ -65,18 +65,21 @@ Spectra addresses this gap by combining psychoeducational content, ML-based beha
 |-------|------|
 | Dataset | UCI Autism Screening Toddler Dataset |
 | Training records | 1,054 |
-| Algorithm | XGBoost Classifier |
-| Accuracy | 98% |
-| AUC Score | 0.9994 |
+| Features | A1–A10 (M-CHAT-R behavioral items), Age_Mons, Sex, Jaundice, Family_mem_with_ASD |
+| Algorithm | XGBoost Classifier, tuned via `GridSearchCV` + stratified 5-fold CV |
+| Baseline | Logistic Regression (for comparison) |
+| Test ROC-AUC / PR-AUC | 1.0 / 1.0 (both baseline and tuned XGBoost — see note below) |
 | Explainability | SHAP (SHapley Additive exPlanations) |
+| Tests | `pytest` suite covering the `/predict` and `/health` endpoints (`ml/test_app.py`) |
 
-The model was trained on behavioral responses (A1–A10 based on M-CHAT-R criteria) plus demographic features. SHAP values are used to generate plain-language explanations of each prediction, mapped to the top 3 contributing features per result.
+The model is trained on behavioral responses (A1–A10) plus `Age_Mons`, `Sex`, `Jaundice`, and `Family_mem_with_ASD`. `Ethnicity` was deliberately excluded — see **Model Limitations & Ethics** below. SHAP values generate plain-language explanations of each prediction, mapped to the top 3 contributing features per result.
 
-**Top predictive features identified by SHAP:**
-- A7 : Unusual response to sounds (highest impact)
-- A9 : Limited facial expressions
-- A6 : Does not notice when others are hurt
+### Model Limitations & Ethics
 
+- **Why accuracy is near-perfect, and why that's not the headline metric:** the dataset's label is derived from thresholding the Q-CHAT-10 score, which is essentially the sum of the same A1–A10 answers used as model inputs. Even a plain logistic regression baseline reaches a perfect 1.0 ROC-AUC/PR-AUC on held-out data — confirming the classes are near-linearly separable from the behavioral answers alone. This should be read as *"automates M-CHAT-R-style triage with an explanation,"* not as evidence of a model that discovered a novel clinical signal. Full reasoning and the baseline-vs-XGBoost comparison are in [`ml/modeling.ipynb`](ml/modeling.ipynb).
+- **Ethnicity was removed as a model feature.** The original dataset's `Ethnicity` column has no established, well-documented clinical link to ASD likelihood, and label-encoding a nominal category like ethnicity implies a false ordinal relationship the model could exploit spuriously. Using race/ethnicity as a raw predictor in a child health-risk score requires a level of justification and fairness auditing this project doesn't have, so it was dropped rather than left in unexamined.
+- **False-negative rate is monitored per subgroup (currently by Sex)** since missing an at-risk child is the costlier error in a screening context. Subgroup sample sizes in this 1,054-row dataset are small, so this is a monitoring direction for real usage data, not a completed fairness audit.
+- **This is a screening aid, not a diagnostic tool.** Every result includes a disclaimer, and the roadmap explicitly routes users toward a qualified developmental pediatrician rather than presenting the risk band as a conclusion.
 
 ---
 

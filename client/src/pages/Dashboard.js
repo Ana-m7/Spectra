@@ -1,5 +1,7 @@
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import SpectraLogo from '../components/SpectraLogo';
 
 const Dashboard = () => {
     const { user, logout } = useAuth();
@@ -10,22 +12,6 @@ const Dashboard = () => {
         logout();
         navigate('/login');
     };
-
-    const SpectraLogo = ({ size = 36 }) => (
-        <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="10" fill="url(#dashGrad)"/>
-            <path d="M20 8C16 8 13 11 13 15C13 17 14 18.5 15.5 19.5C13.5 20.5 12 22.5 12 25C12 28.5 15 31 19 31H21C25 31 28 28.5 28 25C28 22.5 26.5 20.5 24.5 19.5C26 18.5 27 17 27 15C27 11 24 8 20 8Z" fill="white" opacity="0.9"/>
-            <circle cx="17" cy="15" r="2" fill="#7c3aed"/>
-            <circle cx="23" cy="15" r="2" fill="#ec4899"/>
-            <rect x="16" y="22" width="8" height="2" rx="1" fill="#7c3aed"/>
-            <defs>
-                <linearGradient id="dashGrad" x1="0" y1="0" x2="40" y2="40">
-                    <stop offset="0%" stopColor="#7c3aed"/>
-                    <stop offset="100%" stopColor="#ec4899"/>
-                </linearGradient>
-            </defs>
-        </svg>
-    );
 
     const cards = [
         {
@@ -66,9 +52,9 @@ const Dashboard = () => {
         <div style={{ minHeight: '100vh', background: '#f9f8ff', fontFamily: 'Inter, sans-serif' }}>
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
                 .dash-card:hover .dash-card-img { transform: scale(1.04) !important; }
                 .dash-card:hover { box-shadow: 0 20px 50px rgba(124,58,237,0.18) !important; transform: translateY(-4px) !important; }
+                .dash-card:hover .card-arrow { transform: translateX(4px); }
                 .logout-btn:hover { background: #7c3aed !important; color: white !important; }
             `}</style>
 
@@ -99,7 +85,7 @@ const Dashboard = () => {
                         <h2 style={{ fontFamily: 'Playfair Display, Georgia, serif', fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: '800', color: 'white', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
                             Hello, {user?.name}
                         </h2>
-                        
+                        <p style={{ color: 'rgba(255,255,255,0.75)', fontSize: '14px' }}>Here's what's next for your family</p>
                     </div>
                     {!child && (
                         <button onClick={() => navigate('/add-child')}
@@ -145,7 +131,7 @@ const Dashboard = () => {
                                 </p>
                                 <div style={{ marginTop: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.4rem', color: card.border, fontWeight: '600', fontSize: '14px' }}>
                                     Go to {card.title}
-                                    <span style={{ fontSize: '16px' }}>→</span>
+                                    <ArrowRight className="card-arrow" size={16} strokeWidth={2.5} style={{ transition: 'transform 0.2s' }} />
                                 </div>
                             </div>
                         </div>

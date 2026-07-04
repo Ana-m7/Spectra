@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
@@ -22,7 +23,6 @@ FEATURE_EXPLANATIONS = {
     'A10': 'Difficulty with back and forth interaction',
     'Age_Mons': 'Age in months',
     'Sex': 'Sex of child',
-    'Ethnicity': 'Ethnicity',
     'Jaundice': 'History of jaundice',
     'Family_mem_with_ASD': 'Family history of ASD'
 }
@@ -37,22 +37,31 @@ def get_risk_band(probability):
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    data = request.get_json()
-    
-    input_df = pd.DataFrame([data])
-    input_df = input_df[FEATURE_NAMES]
-    
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"message": "Request body must be a JSON object"}), 400
+
+    missing = [f for f in FEATURE_NAMES if f not in data]
+    if missing:
+        return jsonify({"message": f"Missing required fields: {', '.join(missing)}"}), 400
+
+    try:
+        input_df = pd.DataFrame([data])
+        input_df = input_df[FEATURE_NAMES].astype(float)
+    except (ValueError, TypeError):
+        return jsonify({"message": "All fields must be numeric"}), 400
+
     prob = model.predict_proba(input_df)[0][1]
     risk_band = get_risk_band(prob)
-    
+
     shap_vals = explainer.shap_values(input_df)[0]
-    
+
     top_features = sorted(
         zip(FEATURE_NAMES, shap_vals),
         key=lambda x: abs(x[1]),
         reverse=True
     )[:3]
-    
+
     explanations = [
         {
             "feature": f,
@@ -62,7 +71,7 @@ def predict():
         }
         for f, v in top_features
     ]
-    
+
     return jsonify({
         "risk_band": risk_band,
         "confidence": round(float(prob), 3),
@@ -75,4 +84,5 @@ def health():
     return jsonify({"status": "Spectra ML service is running"})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(debug=debug_mode, port=int(os.environ.get('PORT', 5001)))

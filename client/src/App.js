@@ -9,6 +9,7 @@ import Screening from './pages/Screening';
 import Result from './pages/Result';
 import BehaviorLibrary from './pages/BehaviorLibrary';
 import Roadmap from './pages/Roadmap';
+import Journal from './pages/Journal';
 import Landing from './pages/Landing';
 
 const ProtectedRoute = ({ children }) => {
@@ -57,7 +58,12 @@ const App = () => {
                         <ProtectedRoute>
                         <Roadmap />
                         </ProtectedRoute>
-                        
+
+                     }/>
+                     <Route path="/journal" element={
+                        <ProtectedRoute>
+                        <Journal />
+                        </ProtectedRoute>
                      }/>
                 </Routes>
             </Router>

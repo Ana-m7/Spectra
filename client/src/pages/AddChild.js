@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addChild } from '../services/api';
+import SpectraLogo from '../components/SpectraLogo';
 
 
 const AddChild = () => {
-    const [form, setForm] = useState({ name: '', dateOfBirth: '' });
+    const [form, setForm] = useState({ name: '', dateOfBirth: '', sex: '', jaundice: false, familyMemberWithASD: false });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -29,8 +30,8 @@ const AddChild = () => {
 
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-                    <div style={{ width: '64px', height: '64px', background: 'linear-gradient(135deg, #7c3aed, #a855f7)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: '32px' }}>
-                        🧩
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '0 auto 1rem' }}>
+                        <SpectraLogo size={56} />
                     </div>
                     <h1 style={{ fontSize: '24px', fontWeight: '700', color: '#4c1d95' }}>Tell us about your child</h1>
                     <p style={{ color: '#7c3aed', fontSize: '14px', marginTop: '4px' }}>We'll personalize everything for them</p>
@@ -73,6 +74,53 @@ const AddChild = () => {
                             onBlur={e => e.target.style.border = '2px solid #e5e7eb'}
                         />
                         <p style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>We use this to show age-appropriate content</p>
+                    </div>
+
+                    <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                            Sex
+                        </label>
+                        <select
+                            value={form.sex}
+                            onChange={(e) => setForm({ ...form, sex: e.target.value })}
+                            required
+                            style={{ width: '100%', padding: '0.75rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none', background: 'white' }}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'}>
+                            <option value="" disabled>Select sex</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+
+                    <div style={{ marginBottom: '1rem' }}>
+                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                            History of jaundice at birth
+                        </label>
+                        <select
+                            value={form.jaundice ? 'yes' : 'no'}
+                            onChange={(e) => setForm({ ...form, jaundice: e.target.value === 'yes' })}
+                            style={{ width: '100%', padding: '0.75rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none', background: 'white' }}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'}>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+
+                    <div style={{ marginBottom: '1.5rem' }}>
+                        <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', color: '#374151', marginBottom: '6px' }}>
+                            Immediate family member with ASD
+                        </label>
+                        <select
+                            value={form.familyMemberWithASD ? 'yes' : 'no'}
+                            onChange={(e) => setForm({ ...form, familyMemberWithASD: e.target.value === 'yes' })}
+                            style={{ width: '100%', padding: '0.75rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none', background: 'white' }}
+                            onFocus={e => e.target.style.border = '2px solid #7c3aed'}
+                            onBlur={e => e.target.style.border = '2px solid #e5e7eb'}>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
                     </div>
 
                     <button

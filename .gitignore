@@ -3,3 +3,6 @@ desktop.ini
 node_modules/
 desktop.ini
 *.pkl
+build/
+__pycache__/
+.pytest_cache/

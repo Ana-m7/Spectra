@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { BookOpen, TrendingUp, CircleCheck, Sparkles, XCircle, CheckCircle } from 'lucide-react';
+import SpectraLogo from '../components/SpectraLogo';
 
 const sections = [
     {
@@ -7,6 +9,7 @@ const sections = [
         tag: 'Foundation',
         tagBg: '#f5f3ff',
         tagColor: '#7c3aed',
+        Icon: BookOpen,
         img: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80&auto=format&fit=crop',
         content: [
             'Autism Spectrum Disorder (ASD) is a neurodevelopmental condition that affects how a person communicates, interacts socially, and experiences the world around them.',
@@ -21,12 +24,14 @@ const sections = [
         tag: 'Development',
         tagBg: '#f0fdf4',
         tagColor: '#16a34a',
+        Icon: TrendingUp,
         img: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=800&q=80&auto=format&fit=crop',
         content: [
-            '12 months: Does not respond to their name. Does not babble or gesture such as pointing or waving. No back and forth sounds with caregiver.',
-            '18 months: Does not say single words. Does not point to show interest. Does not imitate others. Loses skills they previously had.',
-            '24 months: Does not use two word phrases. Shows little interest in other children. Lines up toys instead of playing with them. Unusual reactions to sounds or textures.',
-            '36 to 48 months: Limited pretend play. Difficulty understanding others feelings. Repetitive movements like spinning or hand flapping. Very rigid routines.'
+            '12 months: Does not respond when their name is called. Little to no babbling or consonant sounds. Does not gesture, including pointing, waving, or reaching to be picked up. Limited back-and-forth smiling or vocal exchange with caregiver.',
+            '18 months: Has not said a single meaningful word. Does not point to show interest in things. Does not imitate simple actions like clapping or waving. Does not bring or show objects just to share enjoyment. May lose words or gestures they previously used.',
+            '24 months: Does not combine two words into a phrase. Shows little interest in other children or parallel play. Lines up toys or objects instead of using them functionally. Unusual or extreme reactions to specific sounds, textures, or lights.',
+            '36 months: Limited pretend or imaginative play. Difficulty noticing or responding when someone else is hurt or upset. Repetitive movements such as spinning, hand flapping, or toe walking. Becomes very distressed by small changes in routine or environment.',
+            '48 months and older: Struggles with back-and-forth conversation, even in short sentences. Narrow, intense interests that dominate play and are hard to redirect from. Difficulty joining cooperative or group games with peers. Unusual tone, rhythm, or flatness in speech.'
         ]
     },
     {
@@ -35,12 +40,14 @@ const sections = [
         tag: 'Awareness',
         tagBg: '#fff7ed',
         tagColor: '#ea580c',
+        Icon: CircleCheck,
+        isMythFact: true,
         img: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800&q=80&auto=format&fit=crop',
         content: [
-            'Myth: He will grow out of it. Fact: Autism does not go away, but early intervention helps children develop skills and reach their potential.',
-            'Myth: She is just shy. Fact: Autism involves more than shyness. It affects communication, sensory processing, and social understanding.',
-            'Myth: It is because of too much screen time. Fact: Screen time does not cause autism. ASD has genetic and neurological roots.',
-            'Myth: Only boys get autism. Fact: Autism affects all genders. Girls are often diagnosed later because they may mask symptoms differently.'
+            { myth: 'He will grow out of it.', fact: 'Autism does not go away, but early intervention helps children develop skills and reach their potential.' },
+            { myth: 'She is just shy.', fact: 'Autism involves more than shyness. It affects communication, sensory processing, and social understanding.' },
+            { myth: 'It is because of too much screen time.', fact: 'Screen time does not cause autism. ASD has genetic and neurological roots.' },
+            { myth: 'Only boys get autism.', fact: 'Autism affects all genders. Girls are often diagnosed later because they may mask symptoms differently.' }
         ]
     },
     {
@@ -49,6 +56,7 @@ const sections = [
         tag: 'Perspective',
         tagBg: '#fdf4ff',
         tagColor: '#a21caf',
+        Icon: Sparkles,
         img: 'https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=800&q=80&auto=format&fit=crop',
         content: [
             'No two children with autism are the same. The spectrum is wide and varied, from children who are nonverbal to those who are highly articulate.',
@@ -62,29 +70,13 @@ const sections = [
 const Awareness = () => {
     const navigate = useNavigate();
 
-    const SpectraLogo = ({ size = 36 }) => (
-        <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="10" fill="url(#awarenessGrad)"/>
-            <path d="M20 8C16 8 13 11 13 15C13 17 14 18.5 15.5 19.5C13.5 20.5 12 22.5 12 25C12 28.5 15 31 19 31H21C25 31 28 28.5 28 25C28 22.5 26.5 20.5 24.5 19.5C26 18.5 27 17 27 15C27 11 24 8 20 8Z" fill="white" opacity="0.9"/>
-            <circle cx="17" cy="15" r="2" fill="#7c3aed"/>
-            <circle cx="23" cy="15" r="2" fill="#ec4899"/>
-            <rect x="16" y="22" width="8" height="2" rx="1" fill="#7c3aed"/>
-            <defs>
-                <linearGradient id="awarenessGrad" x1="0" y1="0" x2="40" y2="40">
-                    <stop offset="0%" stopColor="#7c3aed"/>
-                    <stop offset="100%" stopColor="#ec4899"/>
-                </linearGradient>
-            </defs>
-        </svg>
-    );
-
     return (
         <div style={{ minHeight: '100vh', background: '#f9f8ff', fontFamily: 'Inter, sans-serif' }}>
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
                 .back-btn:hover { background: #7c3aed !important; color: white !important; }
                 .cta-btn:hover { background: #f5f3ff !important; }
+                .cta-outline-btn:hover { background: rgba(255,255,255,0.15) !important; border-color: white !important; }
             `}</style>
 
             {/* Navbar */}
@@ -123,10 +115,10 @@ const Awareness = () => {
             </div>
 
             {/* Sections */}
-            <div style={{ maxWidth: '900px', margin: '0 auto', padding: '4rem 2rem' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '4rem 2rem' }}>
                 {sections.map((section, i) => (
                     <div key={i} style={{ background: 'white', borderRadius: '24px', overflow: 'hidden', marginBottom: '2.5rem', boxShadow: '0 4px 30px rgba(124,58,237,0.08)', borderTop: `4px solid ${section.border}` }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: i % 2 === 0 ? '1fr 1.2fr' : '1.2fr 1fr', minHeight: '320px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: i % 2 === 0 ? '1fr 1.2fr' : '1.2fr 1fr', alignItems: 'stretch' }}>
 
                             {/* Image — alternates sides */}
                             {i % 2 === 0 && (
@@ -138,19 +130,35 @@ const Awareness = () => {
                             {/* Content */}
                             <div style={{ padding: '2.5rem' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
-                                    <span style={{ background: section.tagBg, color: section.tagColor, border: `1px solid ${section.border}20`, padding: '0.3rem 0.875rem', borderRadius: '999px', fontSize: '11px', fontWeight: '700', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                                    <span style={{ background: section.tagBg, color: section.tagColor, border: `1px solid ${section.border}20`, padding: '0.3rem 0.875rem', borderRadius: '999px', fontSize: '11px', fontWeight: '700', letterSpacing: '0.06em', textTransform: 'uppercase', display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                                        <section.Icon size={13} />
                                         {section.tag}
                                     </span>
                                 </div>
                                 <h3 style={{ fontFamily: 'Playfair Display, Georgia, serif', fontSize: '1.4rem', fontWeight: '700', color: '#1e1b4b', marginBottom: '1.5rem', letterSpacing: '-0.01em' }}>
                                     {section.title}
                                 </h3>
-                                {section.content.map((point, j) => (
-                                    <div key={j} style={{ display: 'flex', gap: '0.875rem', marginBottom: '1rem', alignItems: 'flex-start' }}>
-                                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: section.border, marginTop: '8px', flexShrink: 0 }} />
-                                        <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.75' }}>{point}</p>
-                                    </div>
-                                ))}
+                                {section.isMythFact ? (
+                                    section.content.map((point, j) => (
+                                        <div key={j} style={{ marginBottom: '1.25rem' }}>
+                                            <div style={{ display: 'flex', gap: '0.625rem', alignItems: 'center', marginBottom: '0.375rem' }}>
+                                                <XCircle size={16} color="#9ca3af" style={{ flexShrink: 0 }} />
+                                                <p style={{ fontSize: '14px', color: '#9ca3af', lineHeight: '1.6', textDecoration: 'line-through', textDecorationColor: '#d1d5db' }}>{point.myth}</p>
+                                            </div>
+                                            <div style={{ display: 'flex', gap: '0.625rem', alignItems: 'center' }}>
+                                                <CheckCircle size={16} color={section.border} style={{ flexShrink: 0 }} />
+                                                <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.75', fontWeight: '500' }}>{point.fact}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    section.content.map((point, j) => (
+                                        <div key={j} style={{ display: 'flex', gap: '0.875rem', marginBottom: '1rem', alignItems: 'center' }}>
+                                            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: section.border, flexShrink: 0 }} />
+                                            <p style={{ fontSize: '14px', color: '#4b5563', lineHeight: '1.75' }}>{point}</p>
+                                        </div>
+                                    ))
+                                )}
                             </div>
 
                             {/* Image — alternates sides */}
@@ -181,7 +189,10 @@ const Awareness = () => {
                                 style={{ padding: '0.875rem 2rem', background: 'white', color: '#7c3aed', border: 'none', borderRadius: '10px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', transition: 'background 0.2s', fontFamily: 'Inter, sans-serif' }}>
                                 Start Screening
                             </button>
-                            
+                            <button className="cta-outline-btn" onClick={() => navigate('/behaviors')}
+                                style={{ padding: '0.875rem 2rem', background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.5)', borderRadius: '10px', fontSize: '15px', fontWeight: '700', cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'Inter, sans-serif' }}>
+                                Explore Behavior Library
+                            </button>
                         </div>
                     </div>
                 </div>

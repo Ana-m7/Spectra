@@ -19,6 +19,6 @@ exports.getBehaviors = async (req, res) => {
         const behaviors = await Behavior.find(query);
         res.json(behaviors);
     } catch (err) {
-        res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };

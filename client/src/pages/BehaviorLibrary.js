@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getBehaviors } from '../services/api';
+import SpectraLogo from '../components/SpectraLogo';
 
 const concernColors = {
     High: { bg: '#fef2f2', border: '#dc2626', text: '#dc2626', gradient: 'linear-gradient(135deg, #dc2626, #ef4444)' },
@@ -39,27 +40,10 @@ const BehaviorLibrary = () => {
         fetchBehaviors();
     };
 
-    const SpectraLogo = ({ size = 36 }) => (
-        <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="10" fill="url(#behaviorGrad)"/>
-            <path d="M20 8C16 8 13 11 13 15C13 17 14 18.5 15.5 19.5C13.5 20.5 12 22.5 12 25C12 28.5 15 31 19 31H21C25 31 28 28.5 28 25C28 22.5 26.5 20.5 24.5 19.5C26 18.5 27 17 27 15C27 11 24 8 20 8Z" fill="white" opacity="0.9"/>
-            <circle cx="17" cy="15" r="2" fill="#7c3aed"/>
-            <circle cx="23" cy="15" r="2" fill="#ec4899"/>
-            <rect x="16" y="22" width="8" height="2" rx="1" fill="#7c3aed"/>
-            <defs>
-                <linearGradient id="behaviorGrad" x1="0" y1="0" x2="40" y2="40">
-                    <stop offset="0%" stopColor="#7c3aed"/>
-                    <stop offset="100%" stopColor="#ec4899"/>
-                </linearGradient>
-            </defs>
-        </svg>
-    );
-
     return (
         <div style={{ minHeight: '100vh', background: '#f9f8ff', fontFamily: 'Inter, sans-serif' }}>
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
                 .search-input:focus { border: 2px solid #7c3aed !important; box-shadow: 0 0 0 3px rgba(124,58,237,0.1) !important; }
                 .search-btn:hover { background: #5b21b6 !important; }
                 .behavior-card:hover { box-shadow: 0 12px 40px rgba(124,58,237,0.12) !important; transform: translateY(-2px); }
@@ -101,7 +85,7 @@ const BehaviorLibrary = () => {
                 </div>
             </div>
 
-            <div style={{ maxWidth: '860px', margin: '0 auto', padding: '3rem 2rem' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '3rem 2rem' }}>
 
                 {/* Search bar */}
                 <form onSubmit={handleSearch} style={{ marginBottom: '1.5rem' }}>
@@ -167,11 +151,12 @@ const BehaviorLibrary = () => {
                         <p style={{ color: '#9ca3af', fontSize: '14px' }}>Try a different search term or clear your filters.</p>
                     </div>
                 ) : (
-                    behaviors.map((b, i) => {
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(460px, 1fr))', gap: '1.25rem' }}>
+                    {behaviors.map((b, i) => {
                         const colors = concernColors[b.concernLevel] || concernColors['Low'];
                         return (
                             <div key={i} className="behavior-card"
-                                style={{ background: 'white', borderRadius: '20px', padding: '2rem', marginBottom: '1.25rem', boxShadow: '0 4px 20px rgba(124,58,237,0.07)', border: '1px solid #f3f4f6', transition: 'all 0.25s', borderLeft: `4px solid ${colors.border}` }}>
+                                style={{ background: 'white', borderRadius: '20px', padding: '2rem', boxShadow: '0 4px 20px rgba(124,58,237,0.07)', border: '1px solid #f3f4f6', transition: 'all 0.25s', borderLeft: `4px solid ${colors.border}` }}>
 
                                 {/* Card header */}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.875rem', gap: '1rem' }}>
@@ -211,7 +196,8 @@ const BehaviorLibrary = () => {
                                 </div>
                             </div>
                         );
-                    })
+                    })}
+                    </div>
                 )}
             </div>
         </div>

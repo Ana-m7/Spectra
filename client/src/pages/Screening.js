@@ -1,19 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitScreening } from '../services/api';
-
-const questions = [
-    { id: 'A1', text: 'Does your child respond when you call their name?', reverse: true },
-    { id: 'A2', text: 'Does your child make eye contact with you?', reverse: true },
-    { id: 'A3', text: 'Does your child point to show you things they find interesting?', reverse: true },
-    { id: 'A4', text: 'Does your child respond to your smile by smiling back?', reverse: true },
-    { id: 'A5', text: 'Does your child imitate actions you do, like clapping or waving?', reverse: true },
-    { id: 'A6', text: 'Does your child notice when someone around them is hurt or upset?', reverse: true },
-    { id: 'A7', text: 'Does your child respond normally to sounds around them?', reverse: true },
-    { id: 'A8', text: 'Does your child show repetitive movements like spinning, rocking, or hand flapping?', reverse: false },
-    { id: 'A9', text: 'Does your child use facial expressions to communicate feelings?', reverse: true },
-    { id: 'A10', text: 'Does your child engage in back and forth interaction with you?', reverse: true },
-];
+import SpectraLogo from '../components/SpectraLogo';
+import { SCREENING_QUESTIONS as questions } from '../constants/screeningQuestions';
 
 const Screening = () => {
     const [current, setCurrent] = useState(0);
@@ -39,15 +28,16 @@ const Screening = () => {
                 const responses = {
                     ...newAnswers,
                     Age_Mons: child?.ageBand === '12m' ? 12 : child?.ageBand === '18m' ? 18 : child?.ageBand === '24m' ? 24 : child?.ageBand === '36m' ? 36 : 48,
-                    Sex: 1,
-                    Ethnicity: 5,
-                    Jaundice: 0,
-                    Family_mem_with_ASD: 0
+                    Sex: child?.sex === 'male' ? 1 : 0,
+                    Jaundice: child?.jaundice ? 1 : 0,
+                    Family_mem_with_ASD: child?.familyMemberWithASD ? 1 : 0
                 };
                 const { data } = await submitScreening({
                     childId: child._id,
                     responses
                 });
+                const flaggedQuestions = questions.filter(q => newAnswers[q.id] === 1).map(q => q.id);
+                localStorage.setItem('screeningFlags', JSON.stringify(flaggedQuestions));
                 localStorage.setItem('screeningResult', JSON.stringify(data));
                 navigate('/result');
             } catch (err) {
@@ -58,22 +48,6 @@ const Screening = () => {
     };
 
     const progress = ((current) / questions.length) * 100;
-
-    const SpectraLogo = ({ size = 36 }) => (
-        <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect width="40" height="40" rx="10" fill="url(#screenGrad)"/>
-            <path d="M20 8C16 8 13 11 13 15C13 17 14 18.5 15.5 19.5C13.5 20.5 12 22.5 12 25C12 28.5 15 31 19 31H21C25 31 28 28.5 28 25C28 22.5 26.5 20.5 24.5 19.5C26 18.5 27 17 27 15C27 11 24 8 20 8Z" fill="white" opacity="0.9"/>
-            <circle cx="17" cy="15" r="2" fill="#7c3aed"/>
-            <circle cx="23" cy="15" r="2" fill="#ec4899"/>
-            <rect x="16" y="22" width="8" height="2" rx="1" fill="#7c3aed"/>
-            <defs>
-                <linearGradient id="screenGrad" x1="0" y1="0" x2="40" y2="40">
-                    <stop offset="0%" stopColor="#7c3aed"/>
-                    <stop offset="100%" stopColor="#ec4899"/>
-                </linearGradient>
-            </defs>
-        </svg>
-    );
 
     if (!child) {
         return (
@@ -94,7 +68,6 @@ const Screening = () => {
         <div style={{ minHeight: '100vh', background: '#f9f8ff', fontFamily: 'Inter, sans-serif' }}>
 
             <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
                 .yes-btn:hover { background: #16a34a !important; color: white !important; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(22,163,74,0.3) !important; }
                 .no-btn:hover { background: #dc2626 !important; color: white !important; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(220,38,38,0.3) !important; }
                 .back-link:hover { color: #4c1d95 !important; }
