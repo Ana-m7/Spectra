@@ -30,8 +30,3 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     healthCheckPath: /health
-    envVars:
-      # Pinned: the committed .pkl artifacts were serialized under 3.9 and
-      # fail to unpickle on newer Python (numba code-object mismatch)
-      - key: PYTHON_VERSION
-        value: 3.9.18

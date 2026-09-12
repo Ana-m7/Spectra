@@ -2,6 +2,7 @@ import os
 from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
+import shap
 
 app = Flask(__name__)
 
@@ -10,7 +11,11 @@ app = Flask(__name__)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 model = joblib.load(os.path.join(BASE_DIR, 'spectra_model.pkl'))
-explainer = joblib.load(os.path.join(BASE_DIR, 'spectra_explainer.pkl'))
+
+# rebuilt from the model rather than unpickled: the serialized explainer
+# embeds numba-compiled code objects that only load on the Python version
+# that wrote them. Reconstructing is instant and yields identical SHAP values.
+explainer = shap.TreeExplainer(model)
 
 FEATURE_NAMES = model.feature_names_in_.tolist()
 
