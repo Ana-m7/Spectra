@@ -23,8 +23,13 @@ app.set('trust proxy', 1);
 
 app.use(helmet());
 
-// only allow the deployed frontend and local dev to call the API
-const allowedOrigins = [process.env.CLIENT_ORIGIN, 'http://localhost:3000'].filter(Boolean);
+// only allow the deployed frontend and local dev to call the API.
+// trimmed because dashboard-pasted values often carry a trailing newline,
+// which would silently fail the exact-match origin check
+const allowedOrigins = [process.env.CLIENT_ORIGIN, 'http://localhost:3000']
+    .filter(Boolean)
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 app.use(cors({ origin: allowedOrigins }));
 
 app.use(express.json());
@@ -50,7 +55,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', allowedOrigins });
+    res.json({ status: 'ok' });
 });
 
 // centralized error handler — catches malformed JSON bodies (express.json())
