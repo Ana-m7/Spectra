@@ -26,9 +26,11 @@ exports.submitScreening = async (req, res) => {
         if (!child) return res.status(404).json({ message: 'Child not found' });
 
         // call Flask ML microservice
+        // 60s timeout: Render's free tier spins services down when idle,
+        // and a cold-starting ML service can take ~30-50s to wake up
         let flaskResponse;
         try {
-            flaskResponse = await axios.post(`${process.env.FLASK_URL}/predict`, responses);
+            flaskResponse = await axios.post(`${process.env.FLASK_URL}/predict`, responses, { timeout: 60000 });
         } catch (flaskErr) {
             return res.status(502).json({ message: 'Screening service is currently unavailable. Please try again shortly.' });
         }

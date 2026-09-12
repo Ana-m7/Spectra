@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, AlertTriangle, AlertCircle, Info, Map, BookOpen } from 'lucide-react';
 import SpectraLogo from '../components/SpectraLogo';
+import { SCREENING_QUESTIONS } from '../constants/screeningQuestions';
 
 const riskConfig = {
     Low: {
@@ -32,20 +33,24 @@ const riskConfig = {
     },
 };
 
-const getIndicatorExplanation = (confidence, pct) => {
-    if (confidence <= 0.3) {
-        return `${pct}% of behavioral indicators were present in the responses, which is very few.`;
+const getFlaggedExplanation = (flaggedCount, totalCount) => {
+    if (flaggedCount === 0) {
+        return 'None of the behavioral indicators in the screening were flagged.';
     }
-    if (confidence <= 0.6) {
-        return `${pct}% of behavioral indicators were present, worth discussing with your pediatrician.`;
+    if (flaggedCount <= totalCount * 0.3) {
+        return `${flaggedCount} of ${totalCount} behavioral indicators were flagged, which is relatively few.`;
     }
-    return `${pct}% of behavioral indicators were present in the responses.`;
+    if (flaggedCount <= totalCount * 0.6) {
+        return `${flaggedCount} of ${totalCount} behavioral indicators were flagged — worth discussing with your pediatrician.`;
+    }
+    return `${flaggedCount} of ${totalCount} behavioral indicators were flagged in the responses.`;
 };
 
 const Result = () => {
     const navigate = useNavigate();
     const result = JSON.parse(localStorage.getItem('screeningResult'));
     const child = JSON.parse(localStorage.getItem('child'));
+    const flaggedQuestions = JSON.parse(localStorage.getItem('screeningFlags') || '[]');
 
     if (!result) {
         navigate('/screening');
@@ -53,6 +58,9 @@ const Result = () => {
     }
 
     const config = riskConfig[result.riskBand] || riskConfig['Low'];
+    const totalCount = SCREENING_QUESTIONS.length;
+    const flaggedCount = flaggedQuestions.length;
+    const flaggedPct = Math.round((flaggedCount / totalCount) * 100);
 
     return (
         <div style={{ minHeight: '100vh', background: '#f9f8ff', fontFamily: 'Inter, sans-serif' }}>
@@ -117,17 +125,17 @@ const Result = () => {
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                                     <p style={{ fontSize: '13px', fontWeight: '600', color: '#374151', letterSpacing: '0.04em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                                         <Info size={14} color="#9ca3af" />
-                                        Behavioral Indicator Strength
+                                        Flagged Behavioral Indicators
                                     </p>
                                     <span style={{ fontFamily: 'Playfair Display, Georgia, serif', fontSize: '1.1rem', fontWeight: '700', color: config.color }}>
-                                        {Math.round(result.confidence * 100)}%
+                                        {flaggedCount} / {totalCount}
                                     </span>
                                 </div>
                                 <div style={{ background: '#f3f4f6', borderRadius: '999px', height: '8px', overflow: 'hidden' }}>
-                                    <div style={{ background: config.gradient, height: '100%', borderRadius: '999px', width: `${result.confidence * 100}%`, transition: 'width 1s ease' }} />
+                                    <div style={{ background: config.gradient, height: '100%', borderRadius: '999px', width: `${flaggedPct}%`, transition: 'width 1s ease' }} />
                                 </div>
                                 <p style={{ fontSize: '13px', color: '#6b7280', marginTop: '0.625rem', lineHeight: '1.7' }}>
-                                    {getIndicatorExplanation(result.confidence, Math.round(result.confidence * 100))}
+                                    {getFlaggedExplanation(flaggedCount, totalCount)}
                                 </p>
                             </div>
 
@@ -144,7 +152,7 @@ const Result = () => {
 
                         {/* Right column: key factors or reassurance */}
                         <div>
-                            {result.confidence > 0.3 && result.explanations && result.explanations.length > 0 && (
+                            {flaggedCount > 0 && result.explanations && result.explanations.length > 0 && (
                                 <div>
                                     <p style={{ fontSize: '13px', fontWeight: '600', color: '#374151', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '1rem' }}>
                                         Key Factors in This Result
@@ -160,7 +168,7 @@ const Result = () => {
                                 </div>
                             )}
 
-                            {result.confidence <= 0.3 && (
+                            {flaggedCount === 0 && (
                                 <div style={{ padding: '1.25rem', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: '12px' }}>
                                     <p style={{ fontSize: '13px', fontWeight: '700', color: '#16a34a', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                                         No Significant Indicators

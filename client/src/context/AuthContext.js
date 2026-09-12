@@ -13,7 +13,15 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
+    // session data cached by other pages — must not survive an account change
+    const clearSessionData = () => {
+        localStorage.removeItem('child');
+        localStorage.removeItem('screeningResult');
+        localStorage.removeItem('screeningFlags');
+    };
+
     const login = (userData, tokenData) => {
+        clearSessionData();
         setUser(userData);
         setToken(tokenData);
         localStorage.setItem('token', tokenData);
@@ -25,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         setToken(null);
         localStorage.removeItem('token');
         localStorage.removeItem('user');
+        clearSessionData();
     };
 
     return (

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../services/api';
+import { loginUser, getChildren } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import SpectraLogo from '../components/SpectraLogo';
 
@@ -18,9 +18,19 @@ const Login = () => {
         try {
             const { data } = await loginUser(form);
             login(data.user, data.token);
+            // login() clears cached session data, so restore this account's
+            // child profile from the server (most recently added one)
+            try {
+                const { data: children } = await getChildren();
+                if (children.length > 0) {
+                    localStorage.setItem('child', JSON.stringify(children[children.length - 1]));
+                }
+            } catch (err) {
+                // non-fatal — the user can re-add the child profile
+            }
             navigate('/dashboard');
         } catch (err) {
-            setError('Invalid email or password');
+            setError(err.response?.data?.message || 'Login failed. Please try again.');
         }
         setLoading(false);
     };

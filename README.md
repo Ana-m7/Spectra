@@ -25,6 +25,32 @@ Spectra addresses this gap by combining psychoeducational content, ML-based beha
 - Frontend: 
 - Backend API:  
 
+> Deployment is fully scripted — see [DEPLOYMENT.md](DEPLOYMENT.md) for the Vercel + Render setup. Note: free-tier backend services sleep when idle, so the first request may take ~30–60s.
+
+---
+
+## Architecture
+
+```
+┌──────────────────┐        ┌───────────────────┐        ┌───────────────────────┐
+│  React SPA       │  HTTPS │  Node / Express   │  HTTP  │  Flask ML service     │
+│  (Vercel)        │───────▶│  REST API (Render)│───────▶│  XGBoost + SHAP       │
+│  auth, screening │  /api  │  JWT auth, CORS,  │/predict│  (Render, gunicorn)   │
+│  results, roadmap│        │  rate limiting    │        │                       │
+└──────────────────┘        └─────────┬─────────┘        └───────────────────────┘
+                                      │ Mongoose
+                                      ▼
+                            ┌───────────────────┐
+                            │  MongoDB Atlas    │
+                            │  users, children, │
+                            │  screenings,      │
+                            │  behaviors,       │
+                            │  journal entries  │
+                            └───────────────────┘
+```
+
+The client never talks to the ML service directly — every screening goes through the authenticated Node API, which validates input, calls Flask for the prediction + SHAP explanation, and persists the result.
+
 ---
 
 ## Features
@@ -48,13 +74,12 @@ Spectra addresses this gap by combining psychoeducational content, ML-based beha
 
 | Layer | Technology |
 |------|-----------|
-| Frontend | React.js, React Router DOM, Axios |
-| Backend | Node.js, Express.js |
-| ML Microservice | Python, Flask, XGBoost, SHAP, scikit-learn |
-| Database | MongoDB Atlas (app data), MySQL (screening logs) |
-| Authentication | JWT (JSON Web Tokens) |
-| Media Storage | Cloudinary |
-| Deployment | Vercel (frontend), Render (backend + ML) |
+| Frontend | React.js, React Router DOM, Axios, Recharts |
+| Backend | Node.js, Express.js, Helmet, express-rate-limit |
+| ML Microservice | Python, Flask (gunicorn in production), XGBoost, SHAP, scikit-learn |
+| Database | MongoDB Atlas |
+| Authentication | JWT (JSON Web Tokens), bcrypt password hashing |
+| Deployment | Vercel (frontend), Render Blueprint (backend + ML) |
 | Version Control | Git + GitHub |
 
 ---
@@ -94,6 +119,22 @@ The model is trained on behavioral responses (A1–A10) plus `Age_Mons`, `Sex`, 
 | POST | `/api/screening/submit` | Yes | Submit screening → calls Flask |
 | GET | `/api/screening/history/:childId` | Yes | Get screening history |
 | GET | `/api/behaviors` | Yes | Search behavior library |
+| POST | `/api/journal` | Yes | Add weekly journal entry |
+| GET | `/api/journal/history/:childId` | Yes | Get journal history |
+| GET | `/api/health` | No | Health check (used by Render) |
+
+Auth endpoints are rate-limited (20 requests / 15 min per IP) to slow brute-force attempts.
+
+---
+
+## Engineering Decisions
+
+- **ML as a separate microservice** — the Python model is isolated behind its own HTTP API instead of being shelled out from Node, so each service scales and deploys independently and the model can be retrained/swapped without touching the API.
+- **All config via environment variables** — no URLs or secrets in code; the server validates required env vars at startup and fails fast with a clear error instead of crashing on first request.
+- **CORS allowlist, not `*`** — the API only accepts browser requests from the deployed frontend origin and localhost.
+- **Rate limiting on auth routes** — login/register are the brute-force surface, so they get a strict per-IP limit; the rest of the API stays unthrottled behind JWT auth.
+- **Model artifacts are committed** — the trained `.pkl` files (~small) are versioned in git so a deploy is reproducible without re-running training; the notebook that produced them is committed alongside.
+- **Deliberately not included** (scope control for a solo project): Docker, CI/CD, refresh-token rotation, caching layers. Each is a known next step, not an oversight.
 
 ---
 
@@ -110,28 +151,32 @@ git clone https://github.com/Ana-m7/Spectra.git
 cd Spectra
 ```
 
-### 2. Backend setup
-```bash
-cd server
-npm install
-npm run dev
-```
-
-### 3. ML microservice setup
+### 2. ML microservice setup
 ```bash
 cd ml
 pip install -r requirements.txt
-python app.py
+python app.py          # runs on http://localhost:5001
+```
+
+### 3. Backend setup
+```bash
+cd server
+cp .env.example .env   # then fill in MONGO_URI and JWT_SECRET
+npm install
+node config/seedBehaviors.js   # one-time: seed the Behavior Library
+npm run dev            # runs on http://localhost:5000
 ```
 
 ### 4. Frontend setup
 ```bash
 cd client
 npm install
-npm start
+npm start              # runs on http://localhost:3000
 ```
 
-Visit `http://localhost:3000`
+Visit `http://localhost:3000`. No client `.env` needed locally — it defaults to the local API.
+
+To deploy, follow [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ---
 

@@ -1,0 +1,32 @@
+# Render Blueprint — deploys the Node API and the Flask ML service together.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: spectra-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: MONGO_URI
+        sync: false # set in the Render dashboard — never commit secrets
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FLASK_URL
+        fromService:
+          type: web
+          name: spectra-ml
+          envVarKey: RENDER_EXTERNAL_URL
+      - key: CLIENT_ORIGIN
+        sync: false # your Vercel URL, e.g. https://spectra.vercel.app
+
+  - type: web
+    name: spectra-ml
+    runtime: python
+    plan: free
+    rootDir: ml
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /health

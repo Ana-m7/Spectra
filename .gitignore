@@ -1,8 +1,12 @@
 desktop.ini
 .env
 node_modules/
-desktop.ini
-*.pkl
 build/
 __pycache__/
 .pytest_cache/
+.ipynb_checkpoints/
+
+# ignore model artifacts by default, but keep the two the ML service serves
+*.pkl
+!ml/spectra_model.pkl
+!ml/spectra_explainer.pkl

@@ -5,8 +5,12 @@ import pandas as pd
 
 app = Flask(__name__)
 
-model = joblib.load('spectra_model.pkl')
-explainer = joblib.load('spectra_explainer.pkl')
+# resolve artifacts relative to this file so the service works regardless
+# of the working directory it's launched from (python app.py vs gunicorn)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+model = joblib.load(os.path.join(BASE_DIR, 'spectra_model.pkl'))
+explainer = joblib.load(os.path.join(BASE_DIR, 'spectra_explainer.pkl'))
 
 FEATURE_NAMES = model.feature_names_in_.tolist()
 

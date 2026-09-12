@@ -20,7 +20,7 @@ const Register = () => {
             login(data.user, data.token);
             navigate('/add-child');
         } catch (err) {
-            setError('Registration failed. Email may already exist.');
+            setError(err.response?.data?.message || 'Registration failed. Please try again.');
         }
         setLoading(false);
     };
@@ -127,10 +127,11 @@ const Register = () => {
                             <input
                                 className="reg-input"
                                 type="password"
-                                placeholder="Create a strong password"
+                                placeholder="At least 8 characters"
                                 value={form.password}
                                 onChange={(e) => setForm({ ...form, password: e.target.value })}
                                 required
+                                minLength={8}
                                 style={{ width: '100%', padding: '0.875rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none', transition: 'border 0.2s, box-shadow 0.2s', boxSizing: 'border-box', fontFamily: 'Inter, sans-serif' }}
                             />
                         </div>
