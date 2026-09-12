@@ -2,7 +2,7 @@
 
 > "The first step to helping your child isn't a diagnosis. It's knowing what you're looking at."
 
-![Spectra](https://img.shields.io/badge/Status-In%20Development-7c3aed?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-spectra--jet.vercel.app-7c3aed?style=for-the-badge)](https://spectra-jet.vercel.app)
 ![React](https://img.shields.io/badge/React-18-61dafb?style=for-the-badge&logo=react)
 ![Node.js](https://img.shields.io/badge/Node.js-Express-339933?style=for-the-badge&logo=node.js)
 ![Python](https://img.shields.io/badge/Python-Flask-3776ab?style=for-the-badge&logo=python)
@@ -20,12 +20,19 @@ Spectra addresses this gap by combining psychoeducational content, ML-based beha
 
 ---
 
-## Live Demo (coming soon)
+## Live Demo
 
-- Frontend: 
-- Backend API:  
+**→ [spectra-jet.vercel.app](https://spectra-jet.vercel.app)**
 
-> Deployment is fully scripted — see [DEPLOYMENT.md](DEPLOYMENT.md) for the Vercel + Render setup. Note: free-tier backend services sleep when idle, so the first request may take ~30–60s.
+| Service | URL |
+|---|---|
+| Frontend (Vercel) | https://spectra-jet.vercel.app |
+| API (Render) | https://spectra-api-ntsh.onrender.com/api/health |
+| ML service (Render) | https://spectra-ml.onrender.com/health |
+
+> **First load may take ~45 seconds.** Both backend services run on Render's free tier, which spins them down after 15 minutes of inactivity. The screening request has a 60s timeout to tolerate this cold start — subsequent requests are fast.
+
+Deployment is scripted via [`render.yaml`](render.yaml); see [DEPLOYMENT.md](DEPLOYMENT.md) for the full Vercel + Render setup.
 
 ---
 
@@ -182,7 +189,7 @@ To deploy, follow [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Screenshots
 
-> Coming soon : demo video and screenshots will be added post-deployment.
+> Try it live at **[spectra-jet.vercel.app](https://spectra-jet.vercel.app)** — screenshots and a walkthrough video are being added.
 
 ---
 
