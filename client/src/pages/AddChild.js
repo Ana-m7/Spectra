@@ -87,6 +87,8 @@ const AddChild = () => {
                             value={form.dateOfBirth}
                             onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
                             required
+                            min={new Date(Date.now() - 72 * 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)}
+                            max={new Date().toISOString().slice(0, 10)}
                             style={{ width: '100%', padding: '0.75rem 1rem', border: '2px solid #e5e7eb', borderRadius: '10px', fontSize: '15px', outline: 'none' }}
                             onFocus={e => e.target.style.border = '2px solid #7c3aed'}
                             onBlur={e => e.target.style.border = '2px solid #e5e7eb'}
