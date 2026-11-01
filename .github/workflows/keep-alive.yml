@@ -1,0 +1,20 @@
+name: Keep backend services warm
+
+# Render's free tier spins services down after ~15 minutes idle, which turns
+# the first real request into a 30-60s cold start that looks like a broken
+# app to anyone clicking the live link. Pinging both health endpoints well
+# under that window keeps them warm around the clock at no cost.
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API health endpoint
+        run: curl -sf -m 30 https://spectra-api-ntsh.onrender.com/api/health || echo "API ping failed (non-fatal)"
+
+      - name: Ping ML service health endpoint
+        run: curl -sf -m 30 https://spectra-ml.onrender.com/health || echo "ML ping failed (non-fatal)"
